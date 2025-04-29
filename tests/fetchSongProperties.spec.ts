@@ -35,7 +35,7 @@ test.describe('fetchSongProperties', () => {
     `);
 
     const result = await fetchSongProperties(page, 1);
-    expect(result).toEqual([{ title: 'Song Title 1', reference: 'Reference 1' }]);
+    expect(result).toEqual([{ title: 'Song Title 1', references: ['Reference 1'] }]);
 
     await browser.close();
   });
@@ -103,10 +103,10 @@ test.describe('fetchSongProperties', () => {
       </div>
     `);
 
-    const result = await fetchSongProperties(page, 2);
+    const result = await fetchSongProperties(page, 3);
     expect(result).toEqual([
-      { title: 'Song Title 1', reference: 'Reference 1' },
-      { title: 'Song Title 2', reference: null },
+      { title: 'Song Title 1', references: ['Reference 1'] },
+      { title: 'Song Title 2', references: [] },
     ]);
 
     await browser.close();
@@ -148,7 +148,45 @@ test.describe('fetchSongProperties', () => {
     `);
 
     const result = await fetchSongProperties(page, 1);
-    expect(result).toEqual([{ title: 'Song Title 1', reference: 'Reference 1' }]);
+    expect(result).toEqual([{ title: 'Song Title 1', references: ['Reference 1'] }]);
+
+    await browser.close();
+  });
+
+  test('レファレンスが複数ある場合全て取得する', async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage();
+
+    // Mock the page content
+    await page.setContent(`
+      <div id="jp-cmp-main">
+        <section>
+          <jp-cmp-song-search-list>
+            <div class="jp-cmp-music-list-001 jp-cmp-music-list-song-001">
+              <ul>
+                <li>
+                  <div>
+                    <a>
+                      <h3>Song Title 1</h3>
+                      <dl>
+                        <dd>
+                          <span>Reference 1</span>
+                          <span>Reference 2</span>
+                          <span>Reference 3</span>
+                        </dd>
+                      </dl>
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </jp-cmp-song-search-list>
+        </section>
+      </div>
+    `);
+
+    const result = await fetchSongProperties(page, 1);
+    expect(result).toEqual([{ title: 'Song Title 1', references: ['Reference 1', 'Reference 2', 'Reference 3'] }]);
 
     await browser.close();
   });

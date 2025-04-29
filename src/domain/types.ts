@@ -1,4 +1,4 @@
 interface ScrapeResult {
   title: string;
-  reference: string | null;
+  references: string[];
 }
