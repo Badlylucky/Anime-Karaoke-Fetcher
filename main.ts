@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
-import { fetchSongProperties } from './src/JoysoundPageScraper';
+import { fetchSongProperties } from './src/domain/JoysoundPageScraper';
 
-export async function fetchOnePage(url: Readonly<string>): Promise<{ title: string; reference: string|null }[]> {
+export async function fetchOnePage(url: Readonly<string>): Promise<ScrapeResult[]> {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 

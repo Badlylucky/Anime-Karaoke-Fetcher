@@ -1,6 +1,6 @@
 import { chromium, Page } from 'playwright';
 import { expect, test } from '@playwright/test';
-import { fetchSongProperties } from '../src/JoysoundPageScraper';
+import { fetchSongProperties } from '../src/domain/JoysoundPageScraper';
 
 
 test.describe('fetchSongProperties', () => {
