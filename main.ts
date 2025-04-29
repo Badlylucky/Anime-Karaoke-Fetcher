@@ -1,19 +1,23 @@
 import { chromium } from 'playwright';
 import { fetchSongProperties } from './src/domain/JoysoundPageScraper';
+import { convertToTable } from './src/presentation/mdconverter';
 
 export async function fetchOnePage(url: Readonly<string>): Promise<ScrapeResult[]> {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  await page.goto(url);
-
-  const songProperties = await fetchSongProperties(page);
-
-  return songProperties;
+  try {
+    await page.goto(url);
+    const songProperties = await fetchSongProperties(page);
+    return songProperties;
+  } finally {
+    await browser.close();
+  }
 }
 
 (async () => {
-  const url = 'https://www.joysound.com/web/search/song?match=1&keyword=%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%AB%E3%83%A9%E3%82%AA%E3%82%B1&startIndex=0#songlist';
-  const title = await fetchOnePage(url);
-  console.log('First song title:', title);
+  // const url = 'https://www.joysound.com/web/search/song?match=1&keyword=%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%AB%E3%83%A9%E3%82%AA%E3%82%B1&startIndex=0#songlist';
+  const url = 'https://www.joysound.com/web/search/song?match=1&keyword=%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%AB%E3%83%A9%E3%82%AA%E3%82%B1&startIndex=40#songlist';
+  const result = await fetchOnePage(url);
+  console.log(convertToTable(result));
 })();
