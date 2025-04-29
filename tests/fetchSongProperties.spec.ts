@@ -111,4 +111,45 @@ test.describe('fetchSongProperties', () => {
 
     await browser.close();
   });
+
+  test('曲名に余分な要素があった場合取得しない', async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage();
+
+    // Mock the page content
+    await page.setContent(`
+      <div id="jp-cmp-main">
+        <section>
+          <jp-cmp-song-search-list>
+            <div class="jp-cmp-music-list-001 jp-cmp-music-list-song-001">
+              <ul>
+                <li>
+                  <div>
+                    <a>
+                      <h3>Song Title 1
+                      
+                      
+                      
+                      <span>Extra Info</span>
+                      </h3>
+                      <dl>
+                        <dd>
+                          <span>Reference 1</span>
+                        </dd>
+                      </dl>
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </jp-cmp-song-search-list>
+        </section>
+      </div>
+    `);
+
+    const result = await fetchSongProperties(page, 1);
+    expect(result).toEqual([{ title: 'Song Title 1', reference: 'Reference 1' }]);
+
+    await browser.close();
+  });
 });

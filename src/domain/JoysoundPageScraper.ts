@@ -9,7 +9,7 @@ export async function fetchSongProperties(page: Readonly<Page>, itemPerPage: Rea
     const titleElement = await page.waitForSelector(titleSelector, { timeout: 100 }).catch(() => null);
     const referenceElement = await page.waitForSelector(referenceSelector, { timeout: 100 }).catch(() => null);
 
-    const titleStr =  titleElement ? (await titleElement.textContent())?.trim() : null;
+    let titleStr = titleElement ? await titleElement.evaluate(el => el.childNodes[0]?.textContent?.trim() || null) : null;
     const referenceStr = referenceElement ? (await referenceElement.textContent())?.trim() : null;
 
     const title = titleStr ? titleStr : null;
